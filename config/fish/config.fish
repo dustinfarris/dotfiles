@@ -9,14 +9,14 @@ alias activate='source env/bin/activate'
 alias gs='git status'
 alias nv='nvim'
 
-# set --export CURL_CA_BUNDLE /usr/local/etc/openssl@1.1/cert.pem
+set --export PYENV_VIRTUALENV_DISABLE_PROMPT 1
 set --export DJANGO_ENV local
 set --export PATH "/usr/local/opt/openssl/bin:./node_modules/.bin:$PATH"
 set --export GPG_TTY (tty)
 set --export VISUAL nvim
 set --export EDITOR "$VISUAL"
 set --export GIT_EDITOR "$VISUAL"
-# For pypi: https://stackoverflow.com/questions/32772895/python-pip-install-error-ssl-certificate-verify-failed#37688849
+# For curl and anything else: https://stackoverflow.com/questions/32772895/python-pip-install-error-ssl-certificate-verify-failed#37688849
 set --export SSL_CERT_FILE /usr/local/etc/openssl@1.1/cert.pem
 # for python openssl
 set --export LDFLAGS "-L/usr/local/opt/openssl@1.1/lib"
@@ -112,6 +112,8 @@ function fish_prompt --description 'Write out the prompt'
             set suffix '>'
     end
 
+    echo -n (pyenv_version)
+
     # PWD
     set_color $color_cwd
     echo -n (prompt_pwd)
@@ -129,6 +131,15 @@ function fish_prompt --description 'Write out the prompt'
     end
 
     echo -n "$suffix "
+end
+
+function pyenv_version
+    if set -q PYENV_VERSION
+        set_color "#5f5f5f"
+        echo '('$PYENV_VERSION') '
+    else
+        return 0
+    end
 end
 
 function fish_right_prompt

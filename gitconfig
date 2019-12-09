@@ -12,18 +12,18 @@
 [user]
     name = Dustin Farris
     email = dustin@farris.io
-	signingkey = 9AD58984A9BDB82B
+    signingkey = 9AD58984A9BDB82B
 [push]
     default = matching
 [alias]
-	co = checkout
+    co = checkout
     br = branch
     ci = commit
 [gpg]
     program = gpg
 [pull]
-	rebase = true
+    rebase = true
 [core]
-	editor = nvim
+    editor = nvim
 [url "git@github.com:"]
-	insteadOf = https://github.com/
+    insteadOf = https://github.com/

@@ -18,8 +18,8 @@ curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 #==============
 # Install pyenv
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
-status --is-interactive; and pyenv init - | source
-status --is-interactive; and pyenv virtualenv-init - | source
+pyenv init - | source
+pyenv virtualenv-init - | source
 # When updating the python version, the path in config/nvim/init.vim will need
 # to be updated as well
 # == Python 2

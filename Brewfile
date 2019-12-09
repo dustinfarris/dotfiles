@@ -17,6 +17,4 @@ brew "tig"
 cask "postgres"
 
 # languages
-brew "pyenv"
-brew "pyenv-virtualenv"
 brew "zlib" # needed for pyenv installing

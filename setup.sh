@@ -7,11 +7,12 @@ echo "You must disable SIP protection on this machine before homebrew can be ins
 echo "This is done by restarting and entering recovery mode (hold cmd+R)"
 echo "and then enter terminal and run `csrutil disable` and then restart"
 echo
-echo "BUT IT MAY NOT BE NECESSARY!!!!  Maybe MacOS works just fine with the perms it has
-echo "out of the box, so try that first.
+echo "BUT IT MAY NOT BE NECESSARY!!!!  Maybe MacOS works just fine with the perms it has"
+echo "out of the box, so try that first."
 echo
 echo "===================="
-sudo chown -R $(whoami):admin /usr/local
+# I really don't think we should have to do this
+# sudo chown -R $(whoami):admin /usr/local
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew doctor
 brew update
