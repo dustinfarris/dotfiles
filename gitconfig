@@ -1,0 +1,29 @@
+[color]
+    ui = true
+    branch = true
+    diff = true
+    interactive = true
+    status = true
+[color "status"]
+    added = green
+    changed = red
+    deleted = red
+    untracked = yellow
+[user]
+    name = Dustin Farris
+    email = dustin@farris.io
+	signingkey = 9AD58984A9BDB82B
+[push]
+    default = matching
+[alias]
+	co = checkout
+    br = branch
+    ci = commit
+[gpg]
+    program = gpg
+[pull]
+	rebase = true
+[core]
+	editor = nvim
+[url "git@github.com:"]
+	insteadOf = https://github.com/
