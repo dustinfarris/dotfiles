@@ -9,23 +9,15 @@ alias activate='source env/bin/activate'
 alias gs='git status'
 alias nv='nvim'
 
+# set --export CURL_CA_BUNDLE /usr/local/etc/openssl@1.1/cert.pem
 set --export DJANGO_ENV local
-
 set --export PATH "/usr/local/opt/openssl/bin:./node_modules/.bin:$PATH"
-
-# . $HOME/.asdf/asdf.sh
-
 set --export GPG_TTY (tty)
-
-# set --export TERM "tmux-256color"
-
 set --export VISUAL nvim
 set --export EDITOR "$VISUAL"
 set --export GIT_EDITOR "$VISUAL"
-
 # For pypi: https://stackoverflow.com/questions/32772895/python-pip-install-error-ssl-certificate-verify-failed#37688849
-set --export SSL_CERT_FILE /usr/local/etc/openssl/cert.pem
-
+set --export SSL_CERT_FILE /usr/local/etc/openssl@1.1/cert.pem
 # for python openssl
 set --export LDFLAGS "-L/usr/local/opt/openssl@1.1/lib"
 set --export CPPFLAGS "-I/usr/local/opt/openssl@1.1/include"
