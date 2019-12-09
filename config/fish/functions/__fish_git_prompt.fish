@@ -1,0 +1,1 @@
+/usr/local/share/fish/functions/__fish_git_prompt.fish
