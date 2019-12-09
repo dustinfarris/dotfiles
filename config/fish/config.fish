@@ -9,6 +9,15 @@ alias activate='source env/bin/activate'
 alias gs='git status'
 alias nv='nvim'
 
+# CU helpers
+alias dlp-dev1='aws-shib exec dladmin-ucboitlakedev1'
+alias dlp-dev2='aws-shib exec dladmin-ucboitlakedev2'
+alias dlp-dev3='aws-shib exec dladmin-ucboitlakedev3'
+alias dlp-dev4='aws-shib exec dladmin-ucboitlakedev4'
+alias dlp-dev5='aws-shib exec dladmin-ucboitlakedev5'
+alias dlp-admin='aws-shib exec dladmin-ucboitlakeadmin'
+alias dlp-prod='aws-shib exec dladmin-ucboitlakeprod'
+
 set --export PYENV_VIRTUALENV_DISABLE_PROMPT 1
 set --export DJANGO_ENV local
 set --export PATH "/usr/local/opt/openssl/bin:./node_modules/.bin:$PATH"

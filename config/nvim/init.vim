@@ -58,73 +58,112 @@ autocmd User Startified setlocal buftype=
 " }
 " Defx - Browsing files {
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
-" Git
+Plug 'kristijanhusak/defx-icons'
+Plug 'kristijanhusak/defx-git'
+
+augroup vimrc_defx
+  autocmd!
+  autocmd FileType defx call s:defx_mappings()
+  autocmd VimEnter * call s:setup_defx()
+augroup END
+
+" nnoremap <silent> ;n :Defx -split=vertical -winwidth=35 -direction=topleft -columns=git:icons:filename:type -toggle -search=`expand('%:p')` `getcwd()`<CR>
+nnoremap <silent> ;n :call <sid>defx_open()<CR>
+
 let g:defx_git#column_length=1
 let g:defx_git#show_ignored=0
 let g:defx_git#raw_mode=0
-nnoremap <silent> ;n :Defx -split=vertical -winwidth=35 -direction=topleft -columns=git:icons:filename:type -toggle -search=`expand('%:p')` `getcwd()`<CR>
-autocmd FileType defx call s:defx_my_settings()
-function! s:defx_my_settings() abort
-	" Define mappings
-	nnoremap <silent><buffer><expr> <CR>
-				\ defx#do_action('drop')
-	nnoremap <silent><buffer><expr> c
-				\ defx#do_action('copy')
-	nnoremap <silent><buffer><expr> m
-				\ defx#do_action('move')
-	nnoremap <silent><buffer><expr> p
-				\ defx#do_action('paste')
-	nnoremap <silent><buffer><expr> l
-				\ defx#do_action('open')
-	nnoremap <silent><buffer><expr> E
-				\ defx#do_action('open', 'vsplit')
-	nnoremap <silent><buffer><expr> P
-				\ defx#do_action('open', 'pedit')
-	nnoremap <silent><buffer><expr> o
-				\ defx#do_action('open_or_close_tree')
-	nnoremap <silent><buffer><expr> K
-				\ defx#do_action('new_directory')
-	nnoremap <silent><buffer><expr> N
-				\ defx#do_action('new_file')
-	nnoremap <silent><buffer><expr> M
-				\ defx#do_action('new_multiple_files')
-	nnoremap <silent><buffer><expr> C
-				\ defx#do_action('toggle_columns',
-				\                'mark:indent:icon:filename:type:size:time')
-	nnoremap <silent><buffer><expr> S
-				\ defx#do_action('toggle_sort', 'time')
-	nnoremap <silent><buffer><expr> d
-				\ defx#do_action('remove')
-	nnoremap <silent><buffer><expr> r
-				\ defx#do_action('rename')
-	nnoremap <silent><buffer><expr> !
-				\ defx#do_action('execute_command')
-	nnoremap <silent><buffer><expr> x
-				\ defx#do_action('execute_system')
-	nnoremap <silent><buffer><expr> yy
-				\ defx#do_action('yank_path')
-	nnoremap <silent><buffer><expr> .
-				\ defx#do_action('toggle_ignored_files')
-	nnoremap <silent><buffer><expr> ;
-				\ defx#do_action('repeat')
-	nnoremap <silent><buffer><expr> h
-				\ defx#do_action('cd', ['..'])
-	nnoremap <silent><buffer><expr> ~
-				\ defx#do_action('cd')
-	nnoremap <silent><buffer><expr> q
-				\ defx#do_action('quit')
-	nnoremap <silent><buffer><expr> <Space>
-				\ defx#do_action('toggle_select') . 'j'
-	nnoremap <silent><buffer><expr> *
-				\ defx#do_action('toggle_select_all')
-	nnoremap <silent><buffer><expr> j
-				\ line('.') == line('$') ? 'gg' : 'j'
-	nnoremap <silent><buffer><expr> k
-				\ line('.') == 1 ? 'G' : 'k'
-	nnoremap <silent><buffer><expr> <C-g>
-				\ defx#do_action('print')
-	nnoremap <silent><buffer><expr> cd
-				\ defx#do_action('change_vim_cwd')
+let s:default_columns = 'indent:git:icons:filename'
+
+function! s:setup_defx() abort
+    call defx#custom#option('_', {
+        \ 'columns': s:default_columns,
+        \ })
+    call defx#custom#column('filename', {
+        \ 'min_width': 80,
+        \ 'max_width': 80,
+        \ })
+    call s:defx_open({ 'dir': expand('<afile>') })
+endfunction
+
+function s:get_project_root() abort
+    let l:git_root = ''
+    let l:path = expand('%p:h')
+    let l:cmd = systemlist('cd '.l:path.' && git rev-parse --show-toplevel')
+    if !v:shell_error && !empty(l:cmd[0])
+        let l:git_root = fnamemodify(l:cmd[0], ':p:h')
+    endif
+    if !empty(l:git_root)
+        return l:git_root
+    endif
+    return getcwd()
+endfunction
+
+function! s:defx_open(...) abort
+    let l:opts = get(a:, 1, {})
+    let l:is_file = has_key(l:opts, 'dir') && !isdirectory(l:opts.dir)
+    if &filetype ==? 'defx' || l:is_file
+        return
+    endif
+    let l:path = s:get_project_root()
+    if has_key(l:opts, 'dir') && isdirectory(l:opts.dir)
+        let l:path = l:opts.dir
+    endif
+    let l:args = '-winwidth=40 -direction=topleft -split=vertical'
+    if has_key(l:opts, 'find_current_file')
+        call execute(printf('Defx %s -search=%s %s', l:args, expand('%:p'), l:path))
+    else
+        call execute(printf('Defx -toggle %s %s', l:args, l:path))
+        " call execute('wincmd p')   -- return focus to previous pane
+    endif
+    return execute("norm!\<C-w>=")
+endfunction
+
+function! s:defx_context_menu() abort
+  let l:actions = ['new_multiple_files', 'rename', 'copy', 'move', 'paste', 'remove']
+  let l:selection = confirm('Action?', "&New file/directory\n&Rename\n&Copy\n&Move\n&Paste\n&Delete")
+  silent exe 'redraw'
+
+  return feedkeys(defx#do_action(l:actions[l:selection - 1]))
+endfunction
+
+function s:defx_toggle_tree() abort
+    if defx#is_directory()
+        return defx#do_action('open_or_close_tree')
+    endif
+    return defx#do_action('drop')
+endfunction
+
+function! s:defx_mappings() abort
+	nnoremap <silent><buffer><expr> <CR> <sid>defx_toggle_tree()
+	nnoremap <silent><buffer><expr> c defx#do_action('copy')
+	nnoremap <silent><buffer><expr> m defx#do_action('move')
+	nnoremap <silent><buffer><expr> p defx#do_action('paste')
+	nnoremap <silent><buffer><expr> l defx#do_action('open')
+	nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
+	nnoremap <silent><buffer><expr> P defx#do_action('open', 'pedit')
+	nnoremap <silent><buffer><expr> o defx#do_action('open_or_close_tree')
+	nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
+	nnoremap <silent><buffer><expr> N defx#do_action('new_file')
+	nnoremap <silent><buffer><expr> M defx#do_action('new_multiple_files')
+	nnoremap <silent><buffer><expr> C defx#do_action('toggle_columns',                'mark:indent:icon:filename:type:size:time')
+	nnoremap <silent><buffer><expr> S defx#do_action('toggle_sort', 'time')
+	nnoremap <silent><buffer><expr> d defx#do_action('remove')
+	nnoremap <silent><buffer><expr> r defx#do_action('rename')
+	nnoremap <silent><buffer><expr> !\ defx#do_action('execute_command')
+	nnoremap <silent><buffer><expr> x defx#do_action('execute_system')
+	nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
+	nnoremap <silent><buffer><expr> I defx#do_action('toggle_ignored_files')
+	nnoremap <silent><buffer><expr> ; defx#do_action('repeat')
+	nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
+	nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
+	nnoremap <silent><buffer><expr> q defx#do_action('quit')
+	nnoremap <silent><buffer><expr> <Space> defx#do_action('toggle_select') . 'j'
+	nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
+	nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
+	nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+	nnoremap <silent><buffer><expr> <C-g> defx#do_action('print')
+	nnoremap <silent><buffer><expr> cd defx#do_action('change_vim_cwd')
 endfunction
 " }
 " FZF - Fuzzy finder {
@@ -169,9 +208,6 @@ nnoremap <C-w><Left> :exe "vertical resize -" . (winwidth(0) * 1/2)<CR>
 nnoremap <C-w><Up> :exe "resize +" . (winheight(0) * 1/2)<CR>
 nnoremap <C-w><Down> :exe "resize -" . (winheight(0) * 1/2)<CR>
 " }3
-" Folding {3
-noremap <tab> za
-" }3
 " }2
 " Switch syntax highlighting on. {2
 syntax on
@@ -182,6 +218,10 @@ hi LineNr guifg=#626267
 hi CursorLineNr ctermfg=gray ctermbg=233 guifg=#aaaaac guibg=#242d39
 autocmd BufEnter,BufRead *.py,*.elm set colorcolumn=73,80,100
 autocmd BufEnter,BufRead *.ex,*.exs,*.yml,*.html,*.feature,*.js,*.coffee,*.less,*.css,*.sass,*.scss set shiftwidth=2 softtabstop=2 colorcolumn=80,100
+" }2
+" Folding {2
+set foldmethod=syntax
+noremap <tab> za
 " }2
 " Various settings {2
 "-----------------------------------------------------------------------------------
