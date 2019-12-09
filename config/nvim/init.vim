@@ -1,8 +1,11 @@
+" Configuration for Neovim
+" Dustin Farris (2019)
+" ==================================================
+
 " Core configuration {
 let g:python_host_prog = $HOME . '/.pyenv/versions/neovim2/bin/python'
 let g:python3_host_prog = $HOME . '/.pyenv/versions/neovim3/bin/python'
 " }
-
 " Plugins {
 call plug#begin(stdpath('data') . '/plugged')
 " Deoplete - Async completion {
@@ -59,7 +62,7 @@ Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 let g:defx_git#column_length=1
 let g:defx_git#show_ignored=0
 let g:defx_git#raw_mode=0
-nnoremap ;n :Defx -split=vertical -winwidth=35 -direction=topleft -columns=git:icons:filename:type -toggle -search=`expand('%:p')` `getcwd()`<CR>
+nnoremap <silent> ;n :Defx -split=vertical -winwidth=35 -direction=topleft -columns=git:icons:filename:type -toggle -search=`expand('%:p')` `getcwd()`<CR>
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
 	" Define mappings
@@ -148,7 +151,6 @@ Plug 'leafgarland/typescript-vim'
 " }
 call plug#end()
 " }
-
 " General Settings {1
 " Set leader {2
 let mapleader=" "
@@ -169,10 +171,19 @@ nnoremap <C-w><Left> :exe "vertical resize -" . (winwidth(0) * 1/2)<CR>
 nnoremap <C-w><Up> :exe "resize +" . (winheight(0) * 1/2)<CR>
 nnoremap <C-w><Down> :exe "resize -" . (winheight(0) * 1/2)<CR>
 " }3
+" Folding {3
+noremap <tab> za
+" }3
 " }2
-"" Switch syntax highlighting on. {2
-"-----------------------------------------------------------------------------------
+" Switch syntax highlighting on. {2
 syntax on
+" }2
+" Colors! {2
+colorscheme codeschool
+hi LineNr guifg=#626267
+hi CursorLineNr ctermfg=gray ctermbg=233 guifg=#aaaaac guibg=#242d39
+autocmd BufEnter,BufRead *.py,*.elm set colorcolumn=73,80,100
+autocmd BufEnter,BufRead *.ex,*.exs,*.yml,*.html,*.feature,*.js,*.coffee,*.less,*.css,*.sass,*.scss set shiftwidth=2 softtabstop=2 colorcolumn=80,100
 " }2
 " Various settings {2
 "-----------------------------------------------------------------------------------
@@ -180,6 +191,8 @@ set autoindent                         " Copy indent from current line
 set autoread                           " Read open files again when changed outside Vim
 set autowrite                          " Write a modified buffer on each :next , ...
 set backspace=indent,eol,start         " Backspacing over everything in insert mode
+set clipboard=unnamedplus              " Copy yanked text to the system clipboard
+set cursorline                         " Highlight the cursor line
 set history=200                        " Keep 200 lines of command line history
 set incsearch                          " Do incremental searching
 set ignorecase                         " Ignore case when searching....
@@ -193,6 +206,8 @@ set nobackup                           " Don't constantly write backup files
 set noswapfile                         " Ain't nobody got time for swap files
 set noerrorbells                       " Don't beep
 set nowrap                             " Do not wrap lines
+set nu                                 " Show line numbers
+set nuw=6                              " Set line column width
 set showbreak=↪\                       " Character to precede line wraps for the times I turn it on
 set popt=left:8pc,right:3pc            " Print options
 set shiftwidth=4                       " Number of spaces to use for each step of indent
@@ -227,6 +242,84 @@ if has("autocmd")
         \   exe "normal! g`\"" |
         \ endif
 endif
+" }2
+" }1
+" Status line {1
+setl laststatus=2
+
+let s:currentmode={'n':  {'text': 'NORMAL',  'termColor': 60, 'guiColor': '#076678'},
+                 \ 'v':  {'text': 'VISUAL',  'termColor': 58, 'guiColor': '#D65D0E'},
+                 \ 'V':  {'text': 'V-LINE',  'termColor': 58, 'guiColor': '#D65D0E'},
+                 \ '': {'text': 'V-BLOCK', 'termColor': 58, 'guiColor': '#D65D0E'},
+                 \ 'i':  {'text': 'INSERT',  'termColor': 29, 'guiColor': '#8EC07C'},
+                 \ 'R':  {'text': 'REPLACE', 'termColor': 88, 'guiColor': '#CC241D'}}
+
+function! TextForCurrentMode()
+    set lazyredraw
+    if has_key(s:currentmode, mode())
+        let modeMap = s:currentmode[mode()]
+        execute 'hi! User1 ctermfg=255 ctermbg=' . modeMap['termColor'] . 'guifg=#EEEEEE guibg=' . modeMap['guiColor'] . ' cterm=none'
+        return modeMap['text']
+    else
+        return 'UNKNOWN'
+    endif
+    set nolazyredraw
+endfunction
+function! BuildStatusLine(showMode)
+    " Dark theme
+    hi User1 ctermfg=235 ctermbg=101 guibg=#505050 guifg=#d0d0d0 cterm=reverse
+    hi User7 ctermfg=88  ctermbg=235 guibg=#870000 guifg=#e0e0e0 cterm=none
+    hi User8 ctermfg=235 ctermbg=101 guibg=#505050 guifg=#d0d0d0 cterm=reverse
+
+    " Light theme
+    " hi User1 ctermfg=236 ctermbg=101 guifg=#303030 guibg=#d0d0d0 cterm=reverse
+    " hi User7 ctermfg=88  ctermbg=236 guifg=#870000 guibg=#e0e0e0 cterm=none
+    " hi User8 ctermfg=236 ctermbg=101 guifg=#303030 guibg=#d0d0d0 cterm=reverse
+    setl statusline=
+    if a:showMode
+        setl statusline+=%1*\ %{TextForCurrentMode()}\ "
+    endif
+    setl statusline+=%<                              " Truncate contents after when line too long
+    setl statusline+=%{&paste?'>\ PASTE':''}         " Alert when in paste mode
+    setl statusline+=%8*\ %F                         " File path
+    setl statusline+=%7*%m                           " File modified status
+    setl statusline+=%8*                             " Set User8 coloring for rest of status line
+    setl statusline+=%r%h%w                          " Flags
+    setl statusline+=%=                              " Right align the rest of the status line
+    setl statusline+=\ [TYPE=%Y]                     " File type
+    setl statusline+=\ [POS=L%04l,R%04v]             " Cursor position in the file line, row
+    setl statusline+=\ [LEN=%L]                      " Number of line in the file
+    setl statusline+=%#warningmsg#                   " Highlights the syntastic errors in red
+endfunction
+au WinLeave * call BuildStatusLine(0)
+au WinEnter,VimEnter,BufWinEnter * call BuildStatusLine(1)
+" }1
+" Functions {1
+" Strip Whitespace {2
+function! StripTrailingWhitespace()
+  normal mZ
+  let l:chars = col("$")
+  %s/\s\+$//e
+  if (line("'Z") != line(".")) || (l:chars != col("$"))
+    echo "Trailing whitespace stripped\n"
+  endif
+  normal `Z
+endfunction
+autocmd BufWritePre * :call StripTrailingWhitespace()
+" }2
+" Navigate term splits {2
+function! s:NavigateTermSplits(direction)
+  let windowNumber = winnr()
+  execute 'wincmd ' . a:direction
+  if windowNumber == winnr()
+    " We didn't move to a new vim split. Now try to move tmux splits
+    silent call system('tmux select-pane -' . tr(a:direction, 'hjkl', 'LDUR'))
+  endif
+endfunction
+nnoremap <silent> <C-h> :call <SID>NavigateTermSplits('h')<CR>
+nnoremap <silent> <C-j> :call <SID>NavigateTermSplits('j')<CR>
+nnoremap <silent> <C-k> :call <SID>NavigateTermSplits('k')<CR>
+nnoremap <silent> <C-l> :call <SID>NavigateTermSplits('l')<CR>
 " }2
 " }1
 
