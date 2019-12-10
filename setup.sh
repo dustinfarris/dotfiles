@@ -13,23 +13,23 @@ echo
 echo "===================="
 # I really don't think we should have to do this
 # sudo chown -R $(whoami):admin /usr/local
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew doctor
-brew update
+# ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# brew doctor
+# brew update
 
 # So we use all of the packages we are about to install
-echo "export PATH='/usr/local/bin:$PATH'\n" >> ~/.bashrc
-source ~/.bashrc
+#echo "export PATH='/usr/local/bin:$PATH'\n" >> ~/.bashrc
+#source ~/.bashrc
 
 #==============
 # Remove old dot flies
 #==============
-sudo rm -rf ~/.tmux > /dev/null 2>&1
-sudo rm -rf ~/.tmux.conf > /dev/null 2>&1
-sudo rm -rf ~/.gitconfig > /dev/null 2>&1
-sudo rm -rf ~/.tigrc > /dev/null 2>&1
-sudo rm -rf ~/.config > /dev/null 2>&1
-sudo rm -rf ~/Brewfile > /dev/null 2>&1
+rm -rf ~/.tmux > /dev/null 2>&1
+rm -rf ~/.tmux.conf > /dev/null 2>&1
+rm -rf ~/.gitconfig > /dev/null 2>&1
+rm -rf ~/.tigrc > /dev/null 2>&1
+rm -rf ~/.config > /dev/null 2>&1
+rm -rf ~/Brewfile > /dev/null 2>&1
 
 #==============
 # Create symlinks in the home folder
@@ -53,11 +53,6 @@ echo ${SYMLINKS[@]}
 cd ~
 brew bundle
 cd -
-
-#==============
-# Install NVM
-#==============
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
 
 #==============
 # Set fish as the default shell

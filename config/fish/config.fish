@@ -40,9 +40,6 @@ set --export PYENV_ROOT "$HOME/.pyenv"
 set --export PATH "$PYENV_ROOT/bin:$PATH"
 pyenv init - | source
 
-# for nvm
-nvm
-
 # remember iex history
 set --export ERL_AFLAGS "-kernel shell_history enabled"
 
