@@ -121,9 +121,11 @@ function fish_prompt --description 'Write out the prompt'
             set suffix '>'
     end
 
+    echo -n (aws_shib_profile)
     echo -n (pyenv_version)
 
     # PWD
+    set_color normal
     set_color $color_cwd
     echo -n (prompt_pwd)
     set_color normal
@@ -140,6 +142,20 @@ function fish_prompt --description 'Write out the prompt'
     end
 
     echo -n "$suffix "
+end
+
+function aws_shib_profile
+    if set -q AWS_SHIB_PROFILE
+        set profile (string replace -r ".*ucboitlake" "" $AWS_SHIB_PROFILE)
+        if [ $profile = prod ]
+            set_color "#ff5100" --bold
+        else
+            set_color "#e0c011"
+        end
+        echo '('$profile') '
+    else
+        return 0
+    end
 end
 
 function pyenv_version
