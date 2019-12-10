@@ -170,6 +170,9 @@ endfunction
 Plug 'junegunn/fzf'
 noremap <Leader>f :call fzf#run({'source': 'git ls-files', 'sink': 'e', 'down': '20%'})<CR>
 " }
+" Surround - wrapping text in parens, brackets, quotes, etc {2
+Plug 'tpope/vim-surround'
+" }2
 " FT: beancount {
 Plug 'nathangrigg/vim-beancount'
 inoremap php PHP<C-\><C-O>:AlignCommodity<CR>
