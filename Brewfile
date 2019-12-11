@@ -12,6 +12,7 @@ brew "fzf"
 
 # Source Control Tools
 brew "tig"
+brew "mercurial"
 
 # databases
 cask "postgres"
