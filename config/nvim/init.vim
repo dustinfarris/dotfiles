@@ -8,6 +8,9 @@ let g:python3_host_prog = $HOME . '/.pyenv/versions/neovim3/bin/python'
 " }
 " Plugins {
 call plug#begin(stdpath('data') . '/plugged')
+" Denite - Fuzzy search {2
+Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
+" }2
 " Deoplete - Async completion {
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 let g:deoplete#enable_at_startup = 1
@@ -195,6 +198,64 @@ call plug#end()
 " Set leader {2
 let mapleader=" "
 " }2
+" Denite {
+" Change file/rec command.
+call denite#custom#var('file/rec', 'command',
+            \ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+
+" Change matchers.
+call denite#custom#source(
+            \ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
+call denite#custom#source(
+            \ 'file/rec', 'matchers', ['matcher/cpsm'])
+
+" Change sorters.
+call denite#custom#source(
+            \ 'file/rec', 'sorters', ['sorter/sublime'])
+
+" Ag command on grep source
+call denite#custom#var('grep', 'command', ['ag'])
+call denite#custom#var('grep', 'default_opts',
+            \ ['-i', '--vimgrep'])
+call denite#custom#var('grep', 'recursive_opts', [])
+call denite#custom#var('grep', 'pattern_opt', [])
+call denite#custom#var('grep', 'separator', ['--'])
+call denite#custom#var('grep', 'final_opts', [])
+
+" Define alias
+call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+call denite#custom#var('file/rec/git', 'command',
+            \ ['git', 'ls-files', '-co', '--exclude-standard'])
+
+" Change ignore_globs
+call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
+            \ [ '.git/', '.ropeproject/', '__pycache__/',
+            \   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+
+autocmd FileType denite call s:denite_my_settings()
+function! s:denite_my_settings() abort
+  nnoremap <silent><buffer><expr> <CR>
+  \ denite#do_map('do_action')
+  nnoremap <silent><buffer><expr> d
+  \ denite#do_map('do_action', 'delete')
+  nnoremap <silent><buffer><expr> p
+  \ denite#do_map('do_action', 'preview')
+  nnoremap <silent><buffer><expr> q
+  \ denite#do_map('quit')
+  nnoremap <silent><buffer><expr> i
+  \ denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> <Space>
+  \ denite#do_map('toggle_select').'j'
+endfunction
+
+autocmd FileType denite-filter call s:denite_filter_my_settings()
+function! s:denite_filter_my_settings() abort
+    imap <silent><buffer> <C-o> <Plug>(denite_filter_quit)
+endfunction
+
+nnoremap <Leader>b :Denite buffer<CR>
+nnoremap <Leader>f :Denite file/rec -auto-resize -reversed<CR>i
+" }
 " Keymaps {2
 nnoremap <Leader>vu :PlugUpdate<CR>
 nnoremap <Leader><Leader> :b#<CR>
@@ -233,7 +294,6 @@ set autoindent                         " Copy indent from current line
 set autoread                           " Read open files again when changed outside Vim
 set autowrite                          " Write a modified buffer on each :next , ...
 set backspace=indent,eol,start         " Backspacing over everything in insert mode
-set clipboard=unnamedplus              " Copy yanked text to the system clipboard
 set cursorline                         " Highlight the cursor line
 set history=200                        " Keep 200 lines of command line history
 set incsearch                          " Do incremental searching
@@ -372,6 +432,37 @@ nnoremap <silent> <C-j> :call <SID>NavigateTermSplits('j')<CR>
 nnoremap <silent> <C-k> :call <SID>NavigateTermSplits('k')<CR>
 nnoremap <silent> <C-l> :call <SID>NavigateTermSplits('l')<CR>
 " }2
+" Yank to clipboard {
+"===============================================================================
+" DESCRIPTION:   Yank in visual mode will now do three things
+"                1) Default yank behaviour
+"                2) Yank selection to "p register
+"                3) Yank selection to system clipboard
+" EXAMPLE USAGE: Use `y` in visual mode as usual. If the default " register is
+"                overwritten you can still access the selection in the p register
+"                easily with the shortcut <Leader>p
+"===============================================================================
+function! EnhancedYank() range
+    normal! ""gvy
+    let selection = getreg('"')
+    let @p = selection
+    let @+ = selection
+endfunction
+
+function! EnhancedYankToRegister()
+  normal! ""gvy
+  let selection = getreg('"')
+  call inputsave()
+  let g:regToYank = input('Register to yank to: ')
+  call inputrestore()
+  exe "let @" . g:regToYank . " = '" . selection . "'"
+endfunction
+
+xnoremap y :call EnhancedYank()<CR>
+xnoremap <Leader>" :call EnhancedYankToRegister()<CR>
+xnoremap <Leader>p "pp
+nnoremap <Leader>p "pp
+" }
 " }1
 
 " vim: set foldmarker={,} foldlevel=0 foldmethod=marker:
