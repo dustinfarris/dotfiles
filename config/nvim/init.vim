@@ -29,8 +29,8 @@ let g:ale_fixers = {
 			\   'typescript': ['prettier', 'eslint'],
 			\}
 let g:ale_fix_on_save = 1
-map ;j <silent> :ALENext<CR>
-map ;k <silent> :ALEPrevious<CR>
+map ;j :ALENext<CR>
+map ;k :ALEPrevious<CR>
 " }
 " Commentary - Easily comment/uncomment blocks of text {
 Plug 'tpope/vim-commentary'
@@ -197,6 +197,7 @@ let mapleader=" "
 " }2
 " Keymaps {2
 nnoremap <Leader>vu :PlugUpdate<CR>
+nnoremap <Leader><Leader> :b#<CR>
 " Pane splits {3
 nnoremap <Leader>\ :vsplit<CR>
 nnoremap <Leader>- :split<CR>
@@ -283,6 +284,15 @@ if has("autocmd")
         \   exe "normal! g`\"" |
         \ endif
 endif
+" }2
+" }1
+" File Types {1
+" Python {2
+augroup PYTHON
+    autocmd!
+    autocmd FileType python setlocal foldmethod=indent foldlevel=0 foldminlines=0
+    " autocmd BufRead,BufNewFile *.py setlocal foldlevel=0 foldminlines=0
+augroup END
 " }2
 " }1
 " Status line {1
