@@ -60,5 +60,11 @@ cd -
 echo /usr/local/bin/fish | sudo tee -a /etc/shells
 chsh -s /usr/local/bin/fish
 
+#==============
+# Change screenshot capture location
+#==============
+defaults write com.apple.screencapture location ~/Documents/Screenshots/
+killall SystemUIServer
+
 echo "Restart the shell (fish)"
 echo "then run setup.fish"
