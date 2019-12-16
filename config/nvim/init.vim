@@ -259,6 +259,10 @@ nnoremap <Leader>f :Denite file/rec -auto-resize -reversed<CR>i
 " Keymaps {2
 nnoremap <Leader>vu :PlugUpdate<CR>
 nnoremap <Leader><Leader> :b#<CR>
+" Easier popup navigation with Tab {
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" }
 " Pane splits {3
 nnoremap <Leader>\ :vsplit<CR>
 nnoremap <Leader>- :split<CR>
@@ -354,6 +358,9 @@ augroup PYTHON
     " autocmd BufRead,BufNewFile *.py setlocal foldlevel=0 foldminlines=0
 augroup END
 " }2
+" Beancount {
+let g:beancount_separator_col = 72
+" }
 " }1
 " Status line {1
 setl laststatus=2
