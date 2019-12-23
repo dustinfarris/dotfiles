@@ -180,6 +180,8 @@ Plug 'tpope/vim-surround'
 Plug 'nathangrigg/vim-beancount'
 inoremap php PHP<C-\><C-O>:AlignCommodity<CR>
 inoremap php PHP<C-\><C-O>:AlignCommodity<CR>
+inoremap usd USD<C-\><C-O>:AlignCommodity<CR>
+inoremap usd USD<C-\><C-O>:AlignCommodity<CR>
 nnoremap <buffer> <leader>= :AlignCommodity<CR>
 vnoremap <buffer> <leader>= :AlignCommodity<CR>
 " }
@@ -359,7 +361,8 @@ augroup PYTHON
 augroup END
 " }2
 " Beancount {
-let g:beancount_separator_col = 72
+let g:beancount_separator_col = 68
+autocmd BufEnter,BufRead *.beancount set shiftwidth=2 softtabstop=2
 " }
 " }1
 " Status line {1
