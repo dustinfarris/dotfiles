@@ -333,6 +333,7 @@ set noshowmode                         " Hide the default mode text (e.g. -- INS
 set synmaxcol=256                      " Don't syntax highlight long lines
 set nosol                              " Keep cursor in the same column if possible for G, gg, etc.
 set termguicolors                      " Welcome to Oz dorothy
+set mouse=a                            " Enable mouse scrolling
 " }2
 " Treat JSON files like JavaScript {2
 "-----------------------------------------------------------------------------------
