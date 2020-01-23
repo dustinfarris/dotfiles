@@ -171,7 +171,6 @@ endfunction
 " }
 " FZF - Fuzzy finder {
 Plug 'junegunn/fzf'
-noremap <Leader>f :call fzf#run({'source': 'git ls-files', 'sink': 'e', 'down': '20%'})<CR>
 " }
 " Surround - wrapping text in parens, brackets, quotes, etc {2
 Plug 'tpope/vim-surround'
@@ -253,10 +252,15 @@ endfunction
 autocmd FileType denite-filter call s:denite_filter_my_settings()
 function! s:denite_filter_my_settings() abort
     imap <silent><buffer> <C-o> <Plug>(denite_filter_quit)
+    call deoplete#custom#buffer_option('auto_complete', v:false)
 endfunction
 
 nnoremap <Leader>b :Denite buffer<CR>
-nnoremap <Leader>f :Denite file/rec -auto-resize -reversed<CR>i
+nnoremap <Leader>f :Denite file/rec -auto-resize -reversed<CR>
+" }
+" FZF {
+nnoremap <Leader>o :call fzf#run({'source': 'git ls-files', 'sink': 'e', 'down': '20%'})<CR>
+" nnoremap <Leader>o :call fzf#run({'source': 'git ls-files', 'sink': 'e'})<CR>
 " }
 " Keymaps {2
 nnoremap <Leader>vu :PlugUpdate<CR>
@@ -475,6 +479,8 @@ xnoremap <Leader>" :call EnhancedYankToRegister()<CR>
 xnoremap <Leader>p "pp
 nnoremap <Leader>p "pp
 " }
+" Floating FZF {2
+" }2
 " }1
 
 " vim: set foldmarker={,} foldlevel=0 foldmethod=marker:
