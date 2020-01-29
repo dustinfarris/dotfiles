@@ -29,6 +29,7 @@ rm -rf ~/.tmux.conf > /dev/null 2>&1
 rm -rf ~/.gitconfig > /dev/null 2>&1
 rm -rf ~/.tigrc > /dev/null 2>&1
 rm -rf ~/.config > /dev/null 2>&1
+rm -rf ~/.doom.d > /dev/null 2>&1
 rm -rf ~/Brewfile > /dev/null 2>&1
 
 #==============
@@ -47,6 +48,8 @@ ln -s ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
 SYMLINKS+=('.tmux.conf')
 ln -s ~/dotfiles/tigrc ~/.tigrc
 SYMLINKS+=('.tigrc')
+ln -s ~/dotfiles/doom ~/.doom.d
+SYMLINKS+=('.doom.d')
 
 echo ${SYMLINKS[@]}
 
