@@ -56,6 +56,7 @@ echo ${SYMLINKS[@]}
 cd ~
 brew bundle
 cd -
+ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications/.
 
 #==============
 # Set fish as the default shell
