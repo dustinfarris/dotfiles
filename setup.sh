@@ -48,10 +48,6 @@ ln -s ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
 SYMLINKS+=('.tmux.conf')
 ln -s ~/dotfiles/tigrc ~/.tigrc
 SYMLINKS+=('.tigrc')
-ln -s ~/dotfiles/doom ~/.doom.d
-SYMLINKS+=('.doom.d')
-
-echo ${SYMLINKS[@]}
 
 cd ~
 brew bundle
@@ -59,6 +55,10 @@ cd -
 git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 ln -sf /usr/local/opt/emacs-plus/Emacs.app /Applications/.
+ln -sf ~/dotfiles/doom ~/.doom.d
+SYMLINKS+=('.doom.d')
+
+echo ${SYMLINKS[@]}
 
 #==============
 # Set fish as the default shell
