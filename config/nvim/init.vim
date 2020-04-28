@@ -19,19 +19,26 @@ let g:deoplete#enable_at_startup = 1
 Plug 'dense-analysis/ale'
 let g:ale_set_highlights = 0
 let g:ale_pattern_options = {
-			\  '\.py$': {
-			\    'ale_linters': ['flake8']
-			\   },
-			\  '_test\.py$': {
-			\    'ale_linters': [],
-			\  }
-			\}
+            \  '\.py$': {
+            \    'ale_linters': ['flake8']
+            \   },
+            \  '_test\.py$': {
+            \    'ale_linters': [],
+            \  }
+            \}
+let g:ale_linters = {
+            \   'javascript': ['eslint'],
+            \   'typescript': ['eslint', 'tsserver'],
+            \   'vue': ['eslint']
+            \}
 let g:ale_fixers = {
-			\   '*': ['remove_trailing_lines', 'trim_whitespace'],
-			\   'javascript': ['prettier', 'eslint'],
-			\   'typescript': ['prettier', 'eslint'],
-			\}
+            \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+            \   'javascript': ['prettier'],
+            \   'typescript': ['prettier'],
+            \}
 let g:ale_fix_on_save = 1
+let g:ale_warn_about_trailing_blank_lines = 0
+let g:ale_warn_about_trailing_whitespace = 0
 map ;j :ALENext<CR>
 map ;k :ALEPrevious<CR>
 " }
