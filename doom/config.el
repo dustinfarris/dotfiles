@@ -55,3 +55,5 @@
 (map! "C-j" #'windmove-down)
 (map! "C-k" #'windmove-up)
 (map! "C-l" #'windmove-right)
+
+(setq org-bullets-bullet-list '("჻"))

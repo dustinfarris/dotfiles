@@ -55,6 +55,7 @@ cd -
 git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
 ln -sf /usr/local/opt/emacs-plus/Emacs.app /Applications/.
+rm -rf ~/.doom.d
 ln -sf ~/dotfiles/doom ~/.doom.d
 SYMLINKS+=('.doom.d')
 
