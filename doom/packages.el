@@ -36,6 +36,10 @@
 ;  :recipe (:host github :repo "username/repo"
 ;           :files ("some-file.el" "src/lisp/*.el")))
 
+(package! beancount
+:recipe (:host github :repo "beancount/beancount"
+               :files ("editors/emacs/beancount.el")))
+
 ;; If you'd like to disable a package included with Doom, for whatever reason,
 ;; you can do so here with the `:disable' property:
 ;(package! builtin-package :disable t)
