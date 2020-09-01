@@ -200,6 +200,9 @@ Plug 'hashivim/vim-terraform'
 " FT: typescript {
 Plug 'leafgarland/typescript-vim'
 " }
+" FT: elixir {
+Plug 'elixir-editors/vim-elixir'
+" }
 call plug#end()
 " }
 " General Settings {1
