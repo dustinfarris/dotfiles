@@ -185,3 +185,5 @@ function fish_user_key_bindings
     # bind $argv \cr history-token-search-backward
     # bind $argv \cg history-token-search-forward
 end
+
+source /usr/local/opt/asdf/asdf.fish

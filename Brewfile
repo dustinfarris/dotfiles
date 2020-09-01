@@ -29,3 +29,4 @@ cask "postgres"
 # languages
 # brew "zlib" # needed for pyenv installing
 brew "eslint"
+brew "asdf"
