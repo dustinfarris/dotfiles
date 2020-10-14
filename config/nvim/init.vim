@@ -202,6 +202,7 @@ Plug 'leafgarland/typescript-vim'
 " }
 " FT: elixir {
 Plug 'elixir-editors/vim-elixir'
+Plug 'mhinz/vim-mix-format'
 " }
 call plug#end()
 " }
@@ -270,6 +271,7 @@ nnoremap <Leader>f :Denite file/rec -auto-resize -reversed<CR>
 " }
 " FZF {
 nnoremap <Leader>o :call fzf#run({'source': 'git ls-files', 'sink': 'e', 'down': '20%'})<CR>
+set rtp+=/usr/local/opt/fzf
 " nnoremap <Leader>o :call fzf#run({'source': 'git ls-files', 'sink': 'e'})<CR>
 " }
 " Keymaps {2
@@ -379,6 +381,9 @@ augroup END
 let g:beancount_separator_col = 68
 autocmd BufEnter,BufRead *.beancount set shiftwidth=2 softtabstop=2
 autocmd BufEnter,BufRead *.beancount nnoremap <Leader>= :AlignCommodity<CR>
+" }
+" Elixir {
+let g:mix_format_on_save = 1
 " }
 " }1
 " Status line {1
