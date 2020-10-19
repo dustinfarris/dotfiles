@@ -202,7 +202,7 @@ Plug 'leafgarland/typescript-vim'
 " }
 " FT: elixir {
 Plug 'elixir-editors/vim-elixir'
-Plug 'mhinz/vim-mix-format'
+Plug 'joaofcosta/vim-mix-format'
 " }
 call plug#end()
 " }
