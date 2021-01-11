@@ -13,7 +13,11 @@ Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 " }2
 " Deoplete - Async completion {
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-let g:deoplete#enable_at_startup = 1
+" Disabling in favor of CoC
+let g:deoplete#enable_at_startup = 0
+" }
+" CoC - Completion {
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " }
 " Ale - Linting (syntax checking and semantic errors) {
 Plug 'dense-analysis/ale'
@@ -182,6 +186,12 @@ Plug 'junegunn/fzf'
 " Surround - wrapping text in parens, brackets, quotes, etc {2
 Plug 'tpope/vim-surround'
 " }2
+" Magit - Managing git workflows {2
+Plug 'jreybert/vimagit'
+" }2
+" Fugitive - Git blame {2
+Plug 'tpope/vim-fugitive'
+" }
 " FT: beancount {
 Plug 'nathangrigg/vim-beancount'
 inoremap php PHP<C-\><C-O>:AlignCommodity<CR>
@@ -211,66 +221,152 @@ call plug#end()
 let mapleader=" "
 " }2
 " Denite {
-" Change file/rec command.
-call denite#custom#var('file/rec', 'command',
-            \ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+"" === Denite setup ==="
+" Use ripgrep for searching current directory for files
+" By default, ripgrep will respect rules in .gitignore
+"   --files: Print each file that would be searched (but don't search)
+"   --glob:  Include or exclues files for searching that match the given glob
+"            (aka ignore .git files)
+"
+call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob', '!.git'])
 
-" Change matchers.
-call denite#custom#source(
-            \ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
-call denite#custom#source(
-            \ 'file/rec', 'matchers', ['matcher/cpsm'])
+" Use ripgrep in place of 'grep'
+call denite#custom#var('grep', 'command', ['rg'])
 
-" Change sorters.
-call denite#custom#source(
-            \ 'file/rec', 'sorters', ['sorter/sublime'])
+" Custom options for ripgrep
+"   --vimgrep:  Show results with every match on it's own line
+"   --hidden:   Search hidden directories and files
+"   --heading:  Show the file name above clusters of matches from each file
+"   --S:        Search case insensitively if the pattern is all lowercase
+call denite#custom#var('grep', 'default_opts', ['--hidden', '--vimgrep', '--heading', '-S'])
 
-" Ag command on grep source
-call denite#custom#var('grep', 'command', ['ag'])
-call denite#custom#var('grep', 'default_opts',
-            \ ['-i', '--vimgrep'])
+" Recommended defaults for ripgrep via Denite docs
 call denite#custom#var('grep', 'recursive_opts', [])
-call denite#custom#var('grep', 'pattern_opt', [])
+call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
 call denite#custom#var('grep', 'separator', ['--'])
 call denite#custom#var('grep', 'final_opts', [])
 
-" Define alias
-call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+" Remove date from buffer list
+call denite#custom#var('buffer', 'date_format', '')
+
+" Custom options for Denite
+"   auto_resize             - Auto resize the Denite window height automatically.
+"   prompt                  - Customize denite prompt
+"   direction               - Specify Denite window direction as directly below current pane
+"   winminheight            - Specify min height for Denite window
+"   highlight_mode_insert   - Specify h1-CursorLine in insert mode
+"   prompt_highlight        - Specify color of prompt
+"   highlight_matched_char  - Matched characters highlight
+"   highlight_matched_range - matched range highlight
+" This needs match_highlight set to 1 before highlighting will work.
+" Highlighting is currently broken/disabled in neovim but should be working
+" again with 0.5.0 is release:
+"   https://github.com/Shougo/denite.nvim/commit/a38ee0dba1e5fef228f728460fe9afa8af9858e5#commitcomment-38539968
+let s:denite_options = {'default' : {
+            \ 'split': 'floating',
+            \ 'start_filter': 1,
+            \ 'auto_resize': 1,
+            \ 'source_names': 'short',
+            \ 'prompt': ' ',
+            \ 'highlight_mode_insert': 'WildMenu',
+            \ 'match_highlight': 0,
+            \ 'highlight_matched_char': 'QuickFixLine',
+            \ 'highlight_matched_range': 'Visual',
+            \ 'highlight_window_background': 'Visual',
+            \ 'highlight_filter_background': 'Visual',
+            \ 'winrow': 1,
+            \ 'vertical_preview': 1
+            \ }}
+
+" Loop through denite options and enable them
+function! s:profile(opts) abort
+  for l:fname in keys(a:opts)
+    for l:dopt in keys(a:opts[l:fname])
+      call denite#custom#option(l:fname, l:dopt, a:opts[l:fname][l:dopt])
+    endfor
+  endfor
+endfunction
+
+call s:profile(s:denite_options)
+
 call denite#custom#var('file/rec/git', 'command',
             \ ['git', 'ls-files', '-co', '--exclude-standard'])
 
-" Change ignore_globs
-call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
-            \ [ '.git/', '.ropeproject/', '__pycache__/',
-            \   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
-
 autocmd FileType denite call s:denite_my_settings()
 function! s:denite_my_settings() abort
-  nnoremap <silent><buffer><expr> <CR>
-  \ denite#do_map('do_action')
-  nnoremap <silent><buffer><expr> d
-  \ denite#do_map('do_action', 'delete')
-  nnoremap <silent><buffer><expr> p
-  \ denite#do_map('do_action', 'preview')
-  nnoremap <silent><buffer><expr> q
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> i
-  \ denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> <Space>
-  \ denite#do_map('toggle_select').'j'
+    nnoremap <silent><buffer><expr> <Esc>
+                \ denite#do_map('quit')
+    nnoremap <silent><buffer><expr> <CR>
+                \ denite#do_map('do_action')
+    nnoremap <silent><buffer><expr> d
+                \ denite#do_map('do_action', 'delete')
+    nnoremap <silent><buffer><expr> p
+                \ denite#do_map('do_action', 'preview')
+    nnoremap <silent><buffer><expr> q
+                \ denite#do_map('quit')
+    nnoremap <silent><buffer><expr> i
+                \ denite#do_map('open_filter_buffer')
+    nnoremap <silent><buffer><expr> <Space>
+                \ denite#do_map('toggle_select').'j'
 endfunction
 
 autocmd FileType denite-filter call s:denite_filter_my_settings()
 function! s:denite_filter_my_settings() abort
     imap <silent><buffer> <C-o> <Plug>(denite_filter_quit)
+    imap <silent><buffer> <Tab> <Plug>(denite_filter_quit)
+    imap <silent><buffer><expr> <C-a>
+                \ denite#do_map('move_to_next_line')
+    inoremap <silent><buffer><expr> <Esc>
+                \ denite#do_map('quit')
+    nnoremap <silent><buffer><expr> <Esc>
+                \ denite#do_map('quit')
+    inoremap <silent><buffer><expr> <CR>
+                \ denite#do_map('do_action')
+    inoremap <silent><buffer><expr> <C-t>
+                \ denite#do_map('do_action', 'tabopen')
+    inoremap <silent><buffer><expr> <C-v>
+                \ denite#do_map('do_action', 'vsplit')
+    inoremap <silent><buffer><expr> <C-h>
+                \ denite#do_map('do_action', 'split')
     call deoplete#custom#buffer_option('auto_complete', v:false)
 endfunction
 
-nnoremap <Leader>b :Denite buffer<CR>
-nnoremap <Leader>f :Denite file/rec -auto-resize -reversed<CR>
+nmap , :Denite buffer<CR>
+nmap <leader>t :DeniteProjectDir file/rec<CR>
+nnoremap <Leader>o :Denite file/rec<CR>
+nnoremap <Leader>dg :<C-u>Denite grep:. -no-empty<CR>
+nnoremap <Leader>j :<C-u>DeniteCursorWord grep:.<CR>
+" }
+" Git {
+nnoremap <Leader>g :Magit<CR>
+nnoremap <Leader>b :0,3Git blame<CR>
+" }
+" CoC {
+" === coc.nvim === "
+"   <leader>dd    - Jump to definition of current symbol
+"   <leader>dr    - Jump to references of current symbol
+"   <leader>dj    - Jump to implementation of current symbol
+"   <leader>ds    - Fuzzy search current project symbols
+nmap <silent> <leader>] <Plug>(coc-definition)
+nmap <silent> <leader>dr <Plug>(coc-references)
+nmap <silent> <leader>dj <Plug>(coc-implementation)
+nnoremap <silent> <leader>ds :<C-u>CocList -I -N --top symbols<CR>
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
 " }
 " FZF {
-nnoremap <Leader>o :call fzf#run({'source': 'git ls-files', 'sink': 'e', 'down': '20%'})<CR>
+" nnoremap <Leader>o :call fzf#run({'source': 'git ls-files', 'sink': 'e', 'down': '20%'})<CR>
 set rtp+=/usr/local/opt/fzf
 " nnoremap <Leader>o :call fzf#run({'source': 'git ls-files', 'sink': 'e'})<CR>
 " }
@@ -379,11 +475,17 @@ augroup END
 " }2
 " Beancount {
 let g:beancount_separator_col = 68
-autocmd BufEnter,BufRead *.beancount set shiftwidth=2 softtabstop=2
-autocmd BufEnter,BufRead *.beancount nnoremap <Leader>= :AlignCommodity<CR>
+augroup BEANCOUNT
+    autocmd BufEnter,BufRead *.beancount set shiftwidth=2 softtabstop=2
+    autocmd BufEnter,BufRead *.beancount nnoremap <Leader>= :AlignCommodity<CR>
+augroup END
 " }
 " Elixir {
 let g:mix_format_on_save = 1
+augroup ELIXIR
+    autocmd!
+    autocmd FileType elixir setlocal foldlevel=1
+augroup END
 " }
 " }1
 " Status line {1

@@ -186,4 +186,9 @@ function fish_user_key_bindings
     # bind $argv \cg history-token-search-forward
 end
 
+eval (asdf exec direnv hook fish)
+
 source /usr/local/opt/asdf/asdf.fish
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/dustin/Downloads/google-cloud-sdk/path.fish.inc' ]; . '/Users/dustin/Downloads/google-cloud-sdk/path.fish.inc'; end

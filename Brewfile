@@ -18,6 +18,7 @@ brew "emacs-plus", args: ["without-spacemacs-icon"]
 # search tools
 brew "the_silver_searcher"
 brew "fzf"
+brew "ripgrep"
 
 # Source Control Tools
 brew "tig"
