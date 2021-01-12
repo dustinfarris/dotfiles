@@ -1,5 +1,5 @@
 Install Homebrew first
-	
+
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 NOTE that you do NOT need to sudo or chown ANYTHING!
@@ -44,3 +44,7 @@ to be updated as well
 	ln -s (pyenv which flake8) /usr/local/bin/flake8
 
 Finally, start neovim and UpdateRemotePlugins and PlugInstall
+
+## Terminal profile
+
+Install iTerm and import the profile in `Dustin.json`.
