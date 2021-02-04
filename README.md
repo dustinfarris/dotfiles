@@ -31,17 +31,22 @@ When updating the python version, the path in config/nvim/init.vim will need
 to be updated as well
 
 ## Python 2
-	pyenv install 2.7.17
-	pyenv virtualenv 2.7.17 neovim2
-	pyenv activate neovim2
-	pip install neovim
+
+    pyenv install 2.7.18
+    pyenv virtualenv 2.7.18 neovim2
+    pyenv activate neovim2
+    pip install --upgrade pip
+    pip install neovim
+
 ## Python 3
-	pyenv install 3.8.0
-	pyenv virtualenv 3.8.0 neovim3
-	pyenv activate neovim3
-	pip install neovim
-	pip install flake8
-	ln -s (pyenv which flake8) /usr/local/bin/flake8
+
+    pyenv install 3.9.1
+    pyenv virtualenv 3.9.1 neovim3
+    pyenv activate neovim3
+    pip install --upgrade pip
+    pip install neovim
+    pip install flake8
+    ln -s (pyenv which flake8) /usr/local/bin/flake8
 
 Finally, start neovim and UpdateRemotePlugins and PlugInstall
 
