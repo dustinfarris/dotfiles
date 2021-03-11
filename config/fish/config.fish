@@ -43,6 +43,9 @@ pyenv init - | source
 # remember iex history
 set --export ERL_AFLAGS "-kernel shell_history enabled"
 
+# java openjdk
+set --export JAVA_HOME "/usr/local/Cellar/openjdk/15.0.2/"
+
 # empty greeting
 set fish_greeting
 
@@ -186,9 +189,10 @@ function fish_user_key_bindings
     # bind $argv \cg history-token-search-forward
 end
 
+source ~/.asdf/asdf.fish
 eval (asdf exec direnv hook fish)
-
-source /usr/local/opt/asdf/asdf.fish
+# source /usr/local/opt/asdf/asdf.fish
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/dustin/Downloads/google-cloud-sdk/path.fish.inc' ]; . '/Users/dustin/Downloads/google-cloud-sdk/path.fish.inc'; end
+set -g fish_user_paths "/usr/local/opt/openjdk/bin" $fish_user_paths

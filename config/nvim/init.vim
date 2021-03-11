@@ -43,6 +43,7 @@ let g:ale_fixers = {
 let g:ale_fix_on_save = 1
 let g:ale_warn_about_trailing_blank_lines = 0
 let g:ale_warn_about_trailing_whitespace = 0
+let g:ale_java_javalsp_executable = "~/java-language-server/dist/mac/bin/launcher"
 map ;j :ALENext<CR>
 map ;k :ALEPrevious<CR>
 " }
